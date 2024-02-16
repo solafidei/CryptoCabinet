@@ -1,10 +1,8 @@
-import { defaultIfEmpty } from "rxjs";
 import {
   Column,
   CreatedAt,
   DataType,
   Model,
-  PrimaryKey,
   Table,
   UpdatedAt,
 } from "sequelize-typescript";
