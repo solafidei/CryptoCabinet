@@ -3,7 +3,6 @@ import { IsEmail } from "class-validator";
 import { Optional } from "sequelize";
 import {
   BeforeCreate,
-  BeforeUpdate,
   Column,
   CreatedAt,
   DataType,
