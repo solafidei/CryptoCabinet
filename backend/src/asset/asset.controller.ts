@@ -53,4 +53,13 @@ export class AssetController {
     const userId = (req.user as CurrentUser).userId;
     return this.assetService.update(userId, categoryId, asset);
   }
+
+  @Put("asset/transfer")
+  @UseGuards(AuthGuard("jwt"))
+  async transfterAsset(
+    @Body("userId") userId: number,
+    @Body("assetId") assetId: number,
+  ): Promise<Asset> {
+    return this.assetService.transferAsset(userId, assetId);
+  }
 }

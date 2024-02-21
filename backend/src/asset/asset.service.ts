@@ -85,4 +85,12 @@ export class AssetService {
 
     return await asset.save();
   }
+
+  async transferAsset(userId: number, assetId: number): Promise<Asset> {
+    const asset = await this.assetModel.findByPk(assetId);
+
+    asset.userId = userId;
+
+    return await asset.save();
+  }
 }
