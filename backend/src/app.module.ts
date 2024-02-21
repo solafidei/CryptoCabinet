@@ -19,7 +19,7 @@ import { Dialect } from "sequelize";
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadModels: true,
-      synchronize: true,
+      //synchronize: true,
     }),
     TestModule,
     UserModule,

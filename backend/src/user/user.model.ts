@@ -46,7 +46,7 @@ export class User extends Model<UserAttributes, UserInput> {
   refreshToken: string;
 
   @Column({ type: DataType.DATE })
-  refreshTokenExp: string;
+  refreshTokenExp: Date;
 
   @CreatedAt
   readonly createdAt: Date;
