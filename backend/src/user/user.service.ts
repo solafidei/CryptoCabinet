@@ -104,7 +104,7 @@ export class UserService {
   public async getRefreshToken(userId: number): Promise<string> {
     const userDataToUpdate = {
       refreshToken: randomToken.generate(16),
-      refreshTokenExp: moment().format("YYYY/MM/DD"),
+      refreshTokenExp: new Date(moment().format("YYYY/MM/DD")),
     };
 
     const user = await this.userModel.findByPk(userId);

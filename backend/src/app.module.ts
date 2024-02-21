@@ -23,6 +23,7 @@ import { Dialect } from "sequelize";
     }),
     TestModule,
     UserModule,
+    AssetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

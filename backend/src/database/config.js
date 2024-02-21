@@ -6,5 +6,6 @@ module.exports = {
     username: "postgres",
     password: "",
     database: "decentralized-marketplace",
+    seederStorage: "sequelize",
   },
 };

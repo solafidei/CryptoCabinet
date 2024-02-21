@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("AssetCategories", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -11,32 +11,9 @@ module.exports = {
         unique: true,
         primaryKey: true,
       },
-      firstName: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      lastName: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      isActive: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-      },
-      refreshToken: {
-        type: Sequelize.STRING,
-      },
-      refreshTokenExp: {
-        type: Sequelize.DATE,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -50,6 +27,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("AssetCategories");
   },
 };
