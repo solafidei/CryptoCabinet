@@ -6,6 +6,8 @@ import { CreateAssetDTO } from "./dto/create-asset.dto";
 import { User } from "src/user/user.model";
 import { validate } from "class-validator";
 import { AssetCategory } from "./asset-category.model";
+import { Pagination } from "src/utils/pagination-params.decorator";
+import { FindOptions, Op } from "sequelize";
 
 @Injectable()
 export class AssetService {
@@ -18,16 +20,15 @@ export class AssetService {
     private assetCategoryModel: typeof AssetCategory,
   ) {}
 
-  async getUserAssetList(userId: number): Promise<Asset[]> {
-    return this.assetModel.findAll({
-      where: {
-        userId,
-      },
-    });
+  async getUserAssetList(
+    paginationParams: Pagination,
+    userId: number,
+  ): Promise<Asset[]> {
+    return this.assetModel.findAll(getQueryOptions(paginationParams, userId));
   }
 
-  async getAssetList(): Promise<Asset[]> {
-    return this.assetModel.findAll();
+  async getAssetList(paginationParams: Pagination): Promise<Asset[]> {
+    return this.assetModel.findAll(getQueryOptions(paginationParams));
   }
 
   async getCategoryList(): Promise<AssetCategory[]> {
@@ -93,4 +94,21 @@ export class AssetService {
 
     return await asset.save();
   }
+}
+
+function getQueryOptions(
+  paginationParams: Pagination,
+  userId?: number,
+): FindOptions {
+  return {
+    where: {
+      ...(userId ? { userId } : {}),
+      ...(paginationParams.filter
+        ? { name: { [Op.iLike]: `%${paginationParams.filter}%` } }
+        : {}),
+    },
+    order: [["name", paginationParams.order]],
+    limit: paginationParams.limit,
+    offset: paginationParams.offset,
+  };
 }

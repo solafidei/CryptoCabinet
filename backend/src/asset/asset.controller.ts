@@ -12,19 +12,31 @@ import { AuthGuard } from "@nestjs/passport";
 import { Asset } from "./asset.model";
 import { CurrentUser } from "src/user/types/current-user.type";
 import { AssetCategory } from "./asset-category.model";
+import {
+  Pagination,
+  PaginationParams,
+} from "src/utils/pagination-params.decorator";
 
 @Controller()
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
   @Get("user-assets")
   @UseGuards(AuthGuard("jwt"))
-  async getUserAssetList(@Req() req): Promise<Asset[]> {
-    return this.assetService.getUserAssetList((req.user as CurrentUser).userId);
+  async getUserAssetList(
+    @PaginationParams() paginationParams: Pagination,
+    @Req() req,
+  ): Promise<Asset[]> {
+    return this.assetService.getUserAssetList(
+      paginationParams,
+      (req.user as CurrentUser).userId,
+    );
   }
 
   @Get("assets")
-  async getAssetList(): Promise<Asset[]> {
-    return this.assetService.getAssetList();
+  async getAssetList(
+    @PaginationParams() paginationParams: Pagination,
+  ): Promise<Asset[]> {
+    return this.assetService.getAssetList(paginationParams);
   }
 
   @Get("asset-categories")
