@@ -20,6 +20,7 @@ interface UserAttributes {
   isActive: boolean;
   refreshToken: string;
   refreshTokenExp: Date;
+  roles: string[];
 }
 
 export interface UserInput extends Optional<UserAttributes, "id"> {}
@@ -47,6 +48,9 @@ export class User extends Model<UserAttributes, UserInput> {
 
   @Column({ type: DataType.DATE })
   refreshTokenExp: Date;
+
+  @Column({ type: DataType.STRING })
+  roles: string[];
 
   @CreatedAt
   readonly createdAt: Date;

@@ -8,7 +8,6 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { AssetService } from "./asset.service";
-import { AuthGuard } from "@nestjs/passport";
 import { Asset } from "./asset.model";
 import { CurrentUser } from "src/user/types/current-user.type";
 import { AssetCategory } from "./asset-category.model";
@@ -17,6 +16,9 @@ import {
   PaginationParams,
 } from "src/utils/pagination-params.decorator";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { RolesGuard } from "src/auth/roles.guard";
+import { Roles } from "src/auth/roles.decorator";
+import { Role } from "src/auth/role.enum";
 
 @Controller()
 export class AssetController {
@@ -34,6 +36,8 @@ export class AssetController {
   }
 
   @Get("assets")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   async getAssetList(
     @PaginationParams() paginationParams: Pagination,
   ): Promise<Asset[]> {
