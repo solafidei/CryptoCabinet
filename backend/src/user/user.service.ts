@@ -4,14 +4,12 @@ import { User } from "./user.model";
 import { CreateUserDTO, LoginUserDTO } from "./dto";
 import * as argon2 from "argon2";
 import { validate } from "class-validator";
-import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User)
     private userModel: typeof User,
-    private jwtService: JwtService,
   ) {}
 
   async findAll(): Promise<User[]> {

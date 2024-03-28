@@ -7,6 +7,7 @@ import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
 import { AssetModule } from "./asset/asset.module";
 import { Dialect } from "sequelize";
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Dialect } from "sequelize";
     TestModule,
     UserModule,
     AssetModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
