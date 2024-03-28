@@ -6,22 +6,25 @@ import {
   Body,
   Put,
   Delete,
-  HttpException,
-  UsePipes,
   UseGuards,
   Req,
   Res,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "./user.model";
-import { CreateUserDTO, LoginUserDTO } from "./dto";
+import { CreateUserDTO } from "./dto";
 import { CurrentUser } from "./types/current-user.type";
 import { AuthGuard } from "@nestjs/passport";
 import { Response } from "express";
+import { LocalAuthGuard } from "src/auth/local-auth.guard";
+import { AuthService } from "src/auth/auth.service";
 
 @Controller()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
   @Get("users")
   @UseGuards(AuthGuard("jwt"))
   async findAll(): Promise<User[]> {
@@ -29,10 +32,10 @@ export class UserController {
   }
 
   @Post("login")
-  @UseGuards(AuthGuard("local"))
+  @UseGuards(LocalAuthGuard)
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
-    const token = await this.userService.getJwtToken(req.user as CurrentUser);
-    const refreshToken = await this.userService.getRefreshToken(
+    const token = await this.authService.getJwtToken(req.user as CurrentUser);
+    const refreshToken = await this.authService.getRefreshToken(
       req.user.userId,
     );
 
@@ -66,8 +69,8 @@ export class UserController {
     @Req() req,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = await this.userService.getJwtToken(req.user as CurrentUser);
-    const refreshToken = await this.userService.getRefreshToken(
+    const token = await this.authService.getJwtToken(req.user as CurrentUser);
+    const refreshToken = await this.authService.getRefreshToken(
       req.user.userId,
     );
 
