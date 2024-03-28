@@ -25,13 +25,7 @@ import { User } from "src/user/user.model";
     }),
   ],
   exports: [SequelizeModule],
-  providers: [
-    UserService,
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    RefreshStrategy,
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, RefreshStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

@@ -11,13 +11,13 @@ import {
 import { UserService } from "./user.service";
 import { User } from "./user.model";
 import { CreateUserDTO } from "./dto";
-import { AuthGuard } from "@nestjs/passport";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get("users")
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }

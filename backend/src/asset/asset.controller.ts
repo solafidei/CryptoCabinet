@@ -16,12 +16,13 @@ import {
   Pagination,
   PaginationParams,
 } from "src/utils/pagination-params.decorator";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 
 @Controller()
 export class AssetController {
   constructor(private readonly assetService: AssetService) {}
   @Get("user-assets")
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(JwtAuthGuard)
   async getUserAssetList(
     @PaginationParams() paginationParams: Pagination,
     @Req() req,
@@ -45,7 +46,7 @@ export class AssetController {
   }
 
   @Post("asset")
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(JwtAuthGuard)
   async createAsset(
     @Req() req,
     @Body("categoryId") categoryId: number,
@@ -56,7 +57,7 @@ export class AssetController {
   }
 
   @Put("asset")
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(JwtAuthGuard)
   async update(
     @Req() req,
     @Body("categoryID") categoryId: number,
@@ -67,7 +68,7 @@ export class AssetController {
   }
 
   @Put("asset/transfer")
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(JwtAuthGuard)
   async transfterAsset(
     @Body("userId") userId: number,
     @Body("assetId") assetId: number,
