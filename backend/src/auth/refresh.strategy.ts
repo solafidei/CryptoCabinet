@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { Request } from "express";
+
 import { AuthService } from "./auth.service";
+import { FastifyRequest } from "fastify";
+import { AuthPayLoad } from "src/types/auth-payload.types";
 
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
@@ -12,8 +14,10 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
       passReqToCallback: true,
       secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          let data = request?.cookies["auth-cookie"];
+        (request: FastifyRequest) => {
+          let data: AuthPayLoad = JSON.parse(
+            request?.cookies["auth-cookie"] ?? null,
+          );
           if (!data) {
             return null;
           }
@@ -23,10 +27,10 @@ export class RefreshStrategy extends PassportStrategy(Strategy, "refresh") {
     });
   }
 
-  async validate(req: Request, payload: any) {
+  async validate(req: FastifyRequest, payload: any) {
     if (!payload) throw new BadRequestException("Invalid JWT Token");
 
-    const data = req?.cookies["auth-cookie"];
+    const data: AuthPayLoad = JSON.parse(req?.cookies["auth-cookie"] ?? null);
 
     if (!data?.refreshToken)
       throw new BadRequestException("Invalid refresh token");

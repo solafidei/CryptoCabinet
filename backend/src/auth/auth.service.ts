@@ -10,6 +10,9 @@ import { User } from "src/user/user.model";
 import { Injectable } from "@nestjs/common";
 import { LoginUserDTO } from "src/user/dto";
 import { CurrentUser } from "src/user/types/current-user.type";
+import { AuthPayLoad } from "src/types/auth-payload.types";
+import { ApiResponseObject } from "src/shared/api-response.types";
+import { FastifyReply } from "fastify";
 
 @Injectable()
 export class AuthService {
@@ -62,13 +65,19 @@ export class AuthService {
     email: string,
     refreshToken: string,
   ): Promise<CurrentUser> {
-    const weekStart = moment().day(1).format("YYYY/MM/DD");
+    const weekStart = moment().day(1).format("YYYY-MM-DD");
+    const conditional = email
+      ? {
+          email,
+          refreshToken,
+          refreshTokenExp: { [Op.gte]: weekStart },
+        }
+      : {
+          refreshToken,
+          refreshTokenExp: { [Op.gte]: weekStart },
+        };
     const user = await this.userModel.findOne({
-      where: {
-        email,
-        refreshToken,
-        refreshTokenExp: { [Op.gte]: weekStart },
-      },
+      where: conditional,
     });
 
     if (!user) return null;
@@ -76,6 +85,24 @@ export class AuthService {
     const currentUser = this.buildCurrentUser(user);
 
     return currentUser;
+  }
+
+  public async regenerateTokens(
+    req,
+    res: FastifyReply,
+  ): Promise<ApiResponseObject> {
+    const token = await this.getJwtToken(req.user as CurrentUser);
+    const refreshToken = await this.getRefreshToken(req.user.userId);
+
+    const authPayload: AuthPayLoad = {
+      token,
+      refreshToken,
+    };
+
+    res.setCookie("auth-cookie", JSON.stringify(authPayload), {
+      httpOnly: true,
+    });
+    return { action: "none", value: "success" };
   }
 
   private buildCurrentUser(user: User) {

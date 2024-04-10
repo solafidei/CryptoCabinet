@@ -1,7 +1,8 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { Request } from "express";
+import { FastifyReply } from "fastify";
 import { ExtractJwt, Strategy } from "passport-jwt";
+import { AuthPayLoad } from "src/types/auth-payload.types";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
@@ -10,8 +11,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          const data = request?.cookies["auth-cookie"];
+        (request: FastifyReply) => {
+          const data: AuthPayLoad = JSON.parse(
+            request?.cookies["auth-cookie"] ?? null,
+          );
           if (!data) return null;
 
           return data.token;

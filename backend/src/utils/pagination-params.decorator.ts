@@ -3,7 +3,7 @@ import {
   ExecutionContext,
   createParamDecorator,
 } from "@nestjs/common";
-import { Request } from "express";
+import { FastifyRequest } from "fastify";
 
 export interface Pagination {
   page: number;
@@ -14,13 +14,23 @@ export interface Pagination {
   filter: string;
 }
 
+type CustomRequest = FastifyRequest<{
+  Querystring: {
+    page: string;
+    size: string;
+    offset: string;
+    order: string;
+    filter: string;
+  };
+}>;
+
 export const PaginationParams = createParamDecorator(
   (data, ctx: ExecutionContext): Pagination => {
-    const req: Request = ctx.switchToHttp().getRequest();
-    const page = parseInt(req.query.page as string);
-    const size = parseInt(req.query.size as string);
-    const order = (req.query.order as string) ?? "asc";
-    const filter = req.query.filter as string;
+    const req: CustomRequest = ctx.switchToHttp().getRequest();
+    const page = parseInt(req.query.page);
+    const size = parseInt(req.query.size);
+    const order = req.query.order ?? "ASC";
+    const filter = req.query.filter;
 
     if (isNaN(page) || page < 0 || isNaN(size) || size < 0) {
       throw new BadRequestException("Invalid pagination params");
@@ -34,6 +44,7 @@ export const PaginationParams = createParamDecorator(
 
     const limit = size;
     const offset = page * limit;
-    return { page, limit, size, offset, order, filter };
+
+    return { page, limit, size, offset, order, filter } as Pagination;
   },
 );
