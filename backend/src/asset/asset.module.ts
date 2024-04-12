@@ -6,11 +6,13 @@ import { AssetController } from "./asset.controller";
 import { AssetService } from "./asset.service";
 import { UserModule } from "src/user/user.module";
 import { UserService } from "src/user/user.service";
+import { JwtService } from "@nestjs/jwt";
+import { AuthService } from "src/auth/auth.service";
 
 @Module({
   imports: [SequelizeModule.forFeature([Asset, AssetCategory]), UserModule],
   exports: [SequelizeModule],
-  providers: [UserService, AssetService],
+  providers: [UserService, AssetService, JwtService, AuthService],
   controllers: [AssetController],
 })
 export class AssetModule {}

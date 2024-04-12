@@ -1,5 +1,11 @@
 import { ConfigModule } from "@nestjs/config";
-import { Module } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  Req,
+  RequestMethod,
+} from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { TestModule } from "./test/test.module";
@@ -8,6 +14,9 @@ import { UserModule } from "./user/user.module";
 import { AssetModule } from "./asset/asset.module";
 import { Dialect } from "sequelize";
 import { AuthModule } from "./auth/auth.module";
+import { LoggerMiddleware } from "./middleware/logging.middleware";
+import { AuthService } from "./auth/auth.service";
+import { JwtService } from "@nestjs/jwt";
 
 @Module({
   imports: [
@@ -28,6 +37,13 @@ import { AuthModule } from "./auth/auth.module";
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService, JwtService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    /*  consumer
+      .apply(LoggerMiddleware)
+      .exclude({ path: "/login", method: RequestMethod.POST })
+      .forRoutes("*");*/
+  }
+}

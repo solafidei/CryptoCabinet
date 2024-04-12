@@ -20,7 +20,7 @@ import { User } from "src/user/user.model";
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: "1h",
+        expiresIn: "10s",
       },
     }),
   ],

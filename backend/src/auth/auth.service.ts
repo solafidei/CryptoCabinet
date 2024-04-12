@@ -1,7 +1,7 @@
 import { InjectModel } from "@nestjs/sequelize";
 
 import * as argon2 from "argon2";
-
+import { Request, Response } from "express";
 import { JwtService } from "@nestjs/jwt";
 import * as randomToken from "rand-token";
 import * as moment from "moment";
@@ -10,6 +10,7 @@ import { User } from "src/user/user.model";
 import { Injectable } from "@nestjs/common";
 import { LoginUserDTO } from "src/user/dto";
 import { CurrentUser } from "src/user/types/current-user.type";
+import { AuthPayLoad } from "src/types/auth-payload.types";
 
 @Injectable()
 export class AuthService {
@@ -41,7 +42,10 @@ export class AuthService {
       ...user,
     };
 
-    return this.jwtService.signAsync(payload);
+    return this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: "10s",
+    });
   }
 
   public async getRefreshToken(userId: number): Promise<string> {
@@ -62,7 +66,7 @@ export class AuthService {
     email: string,
     refreshToken: string,
   ): Promise<CurrentUser> {
-    const weekStart = moment().day(1).format("YYYY/MM/DD");
+    const weekStart = moment().day(1).format("YYYY-MM-DD");
     const user = await this.userModel.findOne({
       where: {
         email,
@@ -86,5 +90,20 @@ export class AuthService {
     currentUser.email = user.email;
 
     return currentUser;
+  }
+
+  public async regenerateTokens(req, res: Response) {
+    const token = await this.getJwtToken(req.user as CurrentUser);
+    const refreshToken = await this.getRefreshToken(req.user.userId);
+
+    const authPayload: AuthPayLoad = {
+      token,
+      refreshToken,
+    };
+
+    res.cookie("auth-cookie", authPayload, {
+      httpOnly: true,
+    });
+    return { action: "none", value: "success" };
   }
 }

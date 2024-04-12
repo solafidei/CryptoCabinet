@@ -19,6 +19,7 @@ import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { RolesGuard } from "src/auth/roles.guard";
 import { Roles } from "src/auth/roles.decorator";
 import { Role } from "src/auth/role.enum";
+import { AuthenticationGuard } from "src/auth/authentication.guard";
 
 @Controller()
 export class AssetController {
@@ -36,7 +37,7 @@ export class AssetController {
   }
 
   @Get("assets")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(AuthenticationGuard, JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
   async getAssetList(
     @PaginationParams() paginationParams: Pagination,
