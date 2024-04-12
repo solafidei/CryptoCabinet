@@ -1,5 +1,5 @@
 import { ConfigModule } from "@nestjs/config";
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { TestModule } from "./test/test.module";
@@ -30,4 +30,6 @@ import { AuthModule } from "./auth/auth.module";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {}
+}

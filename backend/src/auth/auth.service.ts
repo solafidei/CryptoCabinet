@@ -44,7 +44,11 @@ export class AuthService {
       ...user,
     };
 
-    return this.jwtService.signAsync(payload);
+    // had to manually put cos not cant get them when calling from authguard
+    return await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: "10s",
+    });
   }
 
   public async getRefreshToken(userId: number): Promise<string> {
